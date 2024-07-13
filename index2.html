@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+         html, body {
+            height: 100%;
+            margin: 0;
+        }
+        #rule{
+            width:100%;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #table-container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        table {
+            border-collapse: collapse;
+            background-color: black;
+            color: white;
+            width:100%;
+            height:100%;
+        }
+        th, td {
+            text-align: center;
+            width: calc(100% / 6);
+            height: calc(100% / 6);
+        }
+        .con{
+            width:100%;
+            height:100%;
+            text-align: center;
+            color: white;
+        }
+        .line1{
+            margin: 0;
+            padding: 0;
+            width:50%;
+            height:25%;
+            border-right: 1px solid black;
+
+        }
+        .dot{
+            margin: 0;
+            padding: 0;
+            font-size: 2em;
+        }
+        .line2{
+            margin: 0;
+            padding: 0;
+            width:50%;
+            height:25%;
+            border-right: 1px solid black;
+           
+        }
+        #controller{
+            background-color: white;
+            opacity: 0.7;
+            width: 30vw;
+            height:30vw;
+            border-radius: 50%;
+            overflow: hidden;
+            position: absolute;
+            bottom: 0;
+            right: 0; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #controller table{
+            width:100%;
+            height:100%;
+            background-color: white;
+            color: black;
+            border-collapse: collapse;
+        }
+        #keyUp{
+            border: 1px solid black;
+        }
+        #keyLeft{
+            border: 1px solid black;
+        }
+        #keyDown{
+            border: 1px solid black;
+        }
+        #keyRight{
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div id="rule">
+        <a href="./index.html">PCはこちらから</a>
+        <h1>ゲームのルール説明</h1>
+        <hr>
+        <h2>ゲームの目的:</h2>
+        <p>6x6のグリッド上で、18個の異なる数字の組を作成することを目指します。</p>
+        <h2>ゲームの進行:</h2>
+        <h3>1. 初期設定:</h3>
+            - ゲームが開始されると、6x6のグリッドが表示されます。各セルには「・」が表示されています。
+            - 初期位置として、特定のセル（例: 0,2）にピンク色の点が表示されます。
+        <h3>2. 操作方法:</h3>
+            - 矢印キー（↑、↓、←、→）を使用してピンク色の点を移動させます。
+            - ピンク色の点を移動させた後、そのセルの数字が1ずつ増加します。初期状態では「・」は0と見なされます。
+
+        <h3>3. 連結のルール:</h3>
+            - 同じ列内または行内で、同じ数字が連続して配置されると、その数字が連結されます。
+            - 連結された場合、連結した数字の間のセルは「・」に戻り、連結されたセルの上下/左右の境界線が白くなります。
+
+        </h3>4. 数字の更新:</h3>
+            - 連結が発生したセルは、連結された数字がそのまま残りますが、連結に含まれたセルの数字は「・」に戻ります。
+            - 連結が発生しないセルに移動した場合、そのセルの数字が1ずつ増加します。最大値は18です。
+
+        <h2>終了条件:</h2>
+        - 数字を18まで増やすことができ、すべてのセルが異なる数字の組を形成した場合にゲームがクリアされます。
+        - すべてのセルが最大値に達しても18個の異なる数字の組を作成できなかった場合、ゲームオーバーとなります。
+
+        <h2>操作例:</h2>
+        <p>1. 初期位置（0,2）からスタートし、↓キーを押すと、ピンクの点が(1,2)に移動し、そのセルの数字が1になります。<br>
+        2. 再び↓キーを押すと、ピンクの点が(2,2)に移動し、そのセルの数字が1になります。<br>
+        3. 同じ数字が隣り合っている場合、連結が発生し、連結されたセルの間の数字は「・」に戻ります。</p>
+
+        <h2>注意点:</h2>
+        - 18個の異なる数字の組を作成するためには、戦略的に点を移動させ、同じ数字が隣り合わないようにする必要があります。
+        - ピンク色の点を移動させるごとに、セルの数字が1ずつ増加します。どのセルに移動するかを慎重に考えてプレイしてください。
+
+        楽しんでください！
+    </div>
+    <div id="table-container">
+        <div id="controller">
+            <table>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div id="keyUp">↑</div>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="keyLeft">←</div>
+                    </td>
+                    <td></td>
+                    <td>
+                        <div id="keyRight">→</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div id="keyDown">↓</div>
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function createTable(rows, cols) {
+            const table = document.createElement('table');
+
+            for (let i = 0; i < rows; i++) {
+                const tr = document.createElement('tr');
+                for (let j = 0; j < cols; j++) {
+                    const td = document.createElement('td');
+                    const div = document.createElement('div');
+                    div.classList.add('con');
+                    const line1 = document.createElement('p');
+                    line1.classList.add('line1');
+                    line1.id = `line1_${i}_${j}`;
+                    const dot = document.createElement('p');
+                    dot.textContent = "・"
+                    dot.classList.add('dot');
+                    dot.id = `dot_${i}_${j}`;
+                    const line2 = document.createElement('p');
+                    line2.classList.add('line2');
+                    line2.id = `line2_${i}_${j}`;
+                    div.appendChild(line1);
+                    div.appendChild(dot);
+                    div.appendChild(line2);
+                    td.appendChild(div);
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
+            }
+
+            return table;
+        }
+
+        const tableContainer = document.getElementById('table-container');
+        const table = createTable(6, 6);
+        tableContainer.appendChild(table);
+
+        var m_i = 0;
+        var m_j = 2;
+        let ban_array = new Array(6);
+        for (let i = 0; i < 6; i++) {
+            ban_array[i] = new Array(6).fill(0);
+        }
+        let joined_array = new Array(6);
+        for (let i = 0; i < 6; i++) {
+            joined_array[i] = new Array(6).fill(0);
+        }
+
+        const dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+        dot_now.style.color = "deeppink"
+
+        function research(){
+            let x_ar = new Array(6);
+            for (let x = 0; x < 6; x++) {
+                let y_ar = new Array(6);
+                for (let y = 0; y < 6; y++) {
+                    y_ar[y] = ban_array[y][x];
+                }
+                x_ar[x] = y_ar;
+            }
+            //console.log(x_ar);
+
+            for (let x = 0; x < 6; x++){
+                for (let y = 0; y < 6; y++){
+                    for (let i = 5; i > y; i--){
+                        if ((x_ar[x][y] == x_ar[x][i]) && (x_ar[x][i] > 0)){
+                            if (joined_array[y][x] == 0 && joined_array[i][x] == 0){
+                                //中身を消してつなげる
+                                for (let n = y+1; n < i; n++){
+                                    var dot = document.getElementById(`dot_${n}_${x}`);
+                                    dot.textContent = "・";
+                                    var line1 = document.getElementById(`line1_${n}_${x}`);
+                                    line1.style.borderRight = "1px solid white";
+                                    var line2 = document.getElementById(`line2_${n}_${x}`);
+                                    line2.style.borderRight = "1px solid white";
+                                    ban_array[n][x] = 0;
+                                    joined_array[n][x] = 1;
+                                }
+                                //探索された側が上向きにつながる
+                                var line1 = document.getElementById(`line1_${i}_${x}`);
+                                line1.style.borderRight = "1px solid white";
+                                //探索した側から下向きにつながる
+                                var line2 = document.getElementById(`line2_${y}_${x}`);
+                                line2.style.borderRight = "1px solid white";
+                                //繋がったフラグを立てる
+                                joined_array[y][x] = x_ar[x][y];
+                                joined_array[i][x] = x_ar[x][i];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /*function handleArrowKey(event) {
+            switch (event.key) {
+                case 'ArrowUp':
+                    if (m_i > 0){
+                        let dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "white"
+                        m_i -= 1;
+                        dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "deeppink"
+                        if (joined_array[m_i][m_j] == 0){
+                            if (ban_array[m_i][m_j] < 18){
+                                ban_array[m_i][m_j] += 1;
+                            }
+                            if (ban_array[m_i][m_j] > 0){
+                                dot_now.textContent = `${ban_array[m_i][m_j]}`;
+                            }
+                            else{
+                                dot_now.textContent = "・";
+                            }
+                            research();
+                        }
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (m_i < 5){
+                        let dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "white"
+                        m_i += 1;
+                        dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "deeppink"
+                        if (joined_array[m_i][m_j] == 0){
+                            if (ban_array[m_i][m_j] < 18){
+                                ban_array[m_i][m_j] += 1;
+                            }
+                            if (ban_array[m_i][m_j] > 0){
+                                dot_now.textContent = `${ban_array[m_i][m_j]}`;
+                            }
+                            else{
+                                dot_now.textContent = "・";
+                            }
+                            research();
+                        }
+                    }
+                    break;
+                case 'ArrowLeft':
+                    if (m_j > 0){
+                        let dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "white"
+                        m_j -= 1;
+                        dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "deeppink"
+                        if (joined_array[m_i][m_j] == 0){
+                            if (ban_array[m_i][m_j] < 18){
+                                ban_array[m_i][m_j] += 1;
+                            }
+                            if (ban_array[m_i][m_j] > 0){
+                                dot_now.textContent = `${ban_array[m_i][m_j]}`;
+                            }
+                            else{
+                                dot_now.textContent = "・";
+                            }
+                            research();
+                        }
+                    }
+                    break;
+                case 'ArrowRight':
+                if (m_j < 5){
+                        let dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "white"
+                        m_j += 1;
+                        dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "deeppink"
+                        if (joined_array[m_i][m_j] == 0){
+                            if (ban_array[m_i][m_j] < 18){
+                                ban_array[m_i][m_j] += 1;
+                            }
+                            if (ban_array[m_i][m_j] > 0){
+                                dot_now.textContent = `${ban_array[m_i][m_j]}`;
+                            }
+                            else{
+                                dot_now.textContent = "・";
+                            }
+                            research();
+                        }
+                    }
+                    break;
+                default:
+                    // 矢印キー以外のキーは無視
+                    break;
+            }
+        }
+
+        // keydownイベントリスナーを追加
+        document.addEventListener('keydown', handleArrowKey);*/
+
+        const keyUp= document.getElementById('keyUp');
+
+        // touchstartイベントの処理
+        keyUp.addEventListener('touchstart', function(event) {
+            event.preventDefault(); // デフォルトの動作をキャンセルする（例：スクロール）
+            if (m_i > 0){
+                let dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                dot_now.style.color = "white"
+                m_i -= 1;
+                dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                dot_now.style.color = "deeppink"
+                if (joined_array[m_i][m_j] == 0){
+                    if (ban_array[m_i][m_j] < 18){
+                        ban_array[m_i][m_j] += 1;
+                    }
+                    if (ban_array[m_i][m_j] > 0){
+                        dot_now.textContent = `${ban_array[m_i][m_j]}`;
+                    }
+                    else{
+                        dot_now.textContent = "・";
+                    }
+                    research();
+                }
+            }
+        });
+
+        const keyDown= document.getElementById('keyDown');
+
+        // touchstartイベントの処理
+        keyDown.addEventListener('touchstart', function(event) {
+            event.preventDefault(); // デフォルトの動作をキャンセルする（例：スクロール）
+            if (m_i < 5){
+                        let dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "white"
+                        m_i += 1;
+                        dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "deeppink"
+                        if (joined_array[m_i][m_j] == 0){
+                            if (ban_array[m_i][m_j] < 18){
+                                ban_array[m_i][m_j] += 1;
+                            }
+                            if (ban_array[m_i][m_j] > 0){
+                                dot_now.textContent = `${ban_array[m_i][m_j]}`;
+                            }
+                            else{
+                                dot_now.textContent = "・";
+                            }
+                            research();
+                        }
+                    }
+        });
+
+        const keyLeft= document.getElementById('keyLeft');
+
+        // touchstartイベントの処理
+        keyLeft.addEventListener('touchstart', function(event) {
+            event.preventDefault(); // デフォルトの動作をキャンセルする（例：スクロール）
+            if (m_j > 0){
+                        let dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "white"
+                        m_j -= 1;
+                        dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "deeppink"
+                        if (joined_array[m_i][m_j] == 0){
+                            if (ban_array[m_i][m_j] < 18){
+                                ban_array[m_i][m_j] += 1;
+                            }
+                            if (ban_array[m_i][m_j] > 0){
+                                dot_now.textContent = `${ban_array[m_i][m_j]}`;
+                            }
+                            else{
+                                dot_now.textContent = "・";
+                            }
+                            research();
+                        }
+                    }
+        });
+
+        const keyRight= document.getElementById('keyRight');
+
+        // touchstartイベントの処理
+        keyRight.addEventListener('touchstart', function(event) {
+            event.preventDefault(); // デフォルトの動作をキャンセルする（例：スクロール）
+            if (m_j < 5){
+                        let dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "white"
+                        m_j += 1;
+                        dot_now = document.getElementById(`dot_${m_i}_${m_j}`);
+                        dot_now.style.color = "deeppink"
+                        if (joined_array[m_i][m_j] == 0){
+                            if (ban_array[m_i][m_j] < 18){
+                                ban_array[m_i][m_j] += 1;
+                            }
+                            if (ban_array[m_i][m_j] > 0){
+                                dot_now.textContent = `${ban_array[m_i][m_j]}`;
+                            }
+                            else{
+                                dot_now.textContent = "・";
+                            }
+                            research();
+                        }
+                    }
+        });
+    </script>
+</body>
+</html>
